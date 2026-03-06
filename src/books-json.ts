@@ -20,13 +20,6 @@ app.use(express.json());
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-app.get("/books", async (req: Request, res: Response) => {
-  const books = await getBooks();
-  res.status(200).json(books);
-});
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 app.get("/books/:id", async (req: Request, res: Response) => {
   const books = await getBooks();
   const { id } = req.params;
@@ -43,6 +36,19 @@ app.get("/books/:id", async (req: Request, res: Response) => {
   }
 
   res.status(200).send(book);
+});
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+app.get("/books", async (req: Request, res: Response) => {
+  const books = await getBooks();
+  const { page, limit } = req.query;
+
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const data = books?.slice(skip, skip + Number(limit));
+
+  res.status(200).json(data);
 });
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
